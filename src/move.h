@@ -7,7 +7,7 @@
 
 bool _move_swc = false;
 uint64_t _move_swc_start = 0;
-bool move_enabled = true;
+bool move_enabled = false;
 char _move_path[256] = {0};
 int _move_pathi = 0;
 
@@ -45,22 +45,38 @@ void move_loop() {
 		}
 
 		if (mcs - _move_swc_start > 120000) {
+			digitalWrite(LED_BUILTIN, 1);
 			dev_set_speed(0, 0);
 			delay(1000);
+			digitalWrite(LED_BUILTIN, 0);
 			char c = _move_path[_move_pathi++];
+			if (c == NULL) {
+				_move_pathi = 0;
+				c = 'f';
+			}
 
 			switch (c) {
 			case 'l':
-				dev_set_speed(80, 255);
-				delay(500);
-				break;
-			case 'm':
 				dev_set_speed(255, 255);
-				delay(500);
+				delay(400);
+				while (digitalRead(DEV_LINE_M))
+					dev_set_speed(-255, 255);
+				delay(50);
+				while (!digitalRead(DEV_LINE_M))
+					dev_set_speed(-255, 255);
+				break;
+			case 'f':
+				dev_set_speed(255, 255);
+				delay(800);
 				break;
 			case 'r':
-				dev_set_speed(255, 80);
-				delay(800);
+				dev_set_speed(255, 255);
+				delay(400);
+				while (digitalRead(DEV_LINE_M))
+					dev_set_speed(255, -255);
+				delay(50);
+				while (!digitalRead(DEV_LINE_M))
+					dev_set_speed(255, -255);
 				break;
 			}
 		}
@@ -77,7 +93,7 @@ String move_log() {
 	return String("");
 }
 
-void move_set_path(char *s) {
+void move_set_path(const char *s) {
 	strncpy(_move_path, s, sizeof(_move_path - 1));
 	_move_pathi = 0;
 }
