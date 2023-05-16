@@ -3,6 +3,8 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 
+#include <uri/UriBraces.h>
+
 #ifndef NET_H
 #define NET_H
 
@@ -57,11 +59,17 @@ void net_init() {
 	}
 
 	_net_serv.on("/", []() {
-		_net_serv.send(200, "text/plain", "aaaaaaaaaaaaaaaa");
+		String message = "Move:\n";
+		message += move_log();
+		message += "\n-----\n\nDev:\n";
+		message += dev_log();
+		_net_serv.send(200, "text/plain", message);
 	});
 
-	_net_serv.on("/inline", []() {
-		_net_serv.send(200, "text/plain", "this works as well");
+	_net_serv.on(UriBraces("/move/goto/{}/{}"), []() {
+		move_goto(
+			atoi(_net_serv.pathArg(0).c_str()),
+			atoi(_net_serv.pathArg(1).c_str()));
 	});
 
 	_net_serv.onNotFound(_net_handle_not_found);
