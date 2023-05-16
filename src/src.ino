@@ -13,10 +13,10 @@ void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
 
 	dev_init();
-	//net_init();
+	net_init();
 }
 
 void loop() {
 	move_loop();
-	//net_loop();
+	net_loop();
 }

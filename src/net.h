@@ -66,6 +66,18 @@ void net_init() {
 		_net_serv.send(200, "text/plain", message);
 	});
 
+	_net_serv.on("api/enable", []() {
+		move_enabled = true;
+	});
+
+	_net_serv.on("api/disable", []() {
+		move_enabled = false;
+	});
+
+	_net_serv.on(UriBraces("api/path/{}"), []() {
+		char *s = _net_serv.pathArg(0);
+	});
+
 	_net_serv.onNotFound(_net_handle_not_found);
 
 	_net_serv.begin();
