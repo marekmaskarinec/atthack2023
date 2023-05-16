@@ -21,11 +21,54 @@ enum move_state {
 
 enum move_state _move_state = MoveStateIdle;
 
+void move_loop();
+
 #endif
 
 #ifdef MOVE_IMPL
 
 #include <string.h>
+
+bool _move_scan_cmp(bool scan[3], bool l, bool m, bool r) {
+	return scan[0] == l && scan[1] == m && scan[2] == r;
+}
+
+void _move_advance() {
+	++_move_x;
+	++_move_y;
+
+	if (_move_dirx && _move_x == _move_target_x) {
+		const bool clockwise = _move_y < _move_target_y;
+		const int l = clockwise ? 255 : -255;
+		const int r = clockwise ? -255 : 255;
+
+		while (digitalRead(DEV_LINE_M)) {
+			dev_set_speed(l, r);
+			delay(20);
+		}
+
+		while (!digitalRead(DEV_LINE_M)) {
+			dev_set_speed(l, r);
+			delay(20);
+		}
+	}
+
+	if (_move_diry && _move_y == _move_target_y) {
+		const bool clockwise = _move_x < _move_target_x;
+		const int l = clockwise ? 255 : -255;
+		const int r = clockwise ? -255 : 255;
+
+		while (digitalRead(DEV_LINE_M)) {
+			dev_set_speed(l, r);
+			delay(20);
+		}
+
+		while (!digitalRead(DEV_LINE_M)) {
+			dev_set_speed(l, r);
+			delay(20);
+		}
+	}
+}
 
 void move_loop() {
 	bool scan[3] = {
@@ -38,7 +81,17 @@ void move_loop() {
 	case MoveStateIdle:
 		break;
 	case MoveStateDrive:
-		
+		if (scan[0] && !scan[2]) {
+			dev_set_speed(255, 200);
+		} else if (!scan[0] && scan[2]) {
+			dev_set_speed(200, 255);
+		} else {
+			dev_set_speed(255, 255);
+		}
+
+		if (_move_scan_cmp(scan, 1, 1, 1) &&
+			_move_scan_cmp(_move_last_scan, 0, 1, 0))
+				_move_advance();
 		break;
 	}
 
