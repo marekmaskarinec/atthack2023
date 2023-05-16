@@ -1,3 +1,5 @@
+#include <ESP32Servo.h>
+
 #ifndef DEV_H
 #define DEV_H
 
@@ -10,6 +12,9 @@
 
 Servo dev_servo_l;
 Servo dev_servo_r;
+
+void dev_init();
+void dev_set_speed(int l, int r);
 
 #endif
 
@@ -24,8 +29,9 @@ void dev_init() {
 	dev_servo_r.attach(DEV_SERVO_R_PIN);
 }
 
-void dev_set_speed(int l, int r) {
-
+void dev_set_speed(int l, int r) {	// 0 - still; -255 - full speed back; 255 - full speed forward 
+	dev_servo_l.write(map(l, -255, 255, 0, 180));
+	dev_servo_r.write(map(r, -255, 255, 0, 180));
 }
 
 #undef DEV_IMPL
