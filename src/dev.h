@@ -1,3 +1,5 @@
+#include <ESP32Servo.h>
+
 #ifndef DEV_H
 #define DEV_H
 
@@ -10,6 +12,9 @@
 
 Servo dev_servo_l;
 Servo dev_servo_r;
+
+void dev_init();
+void dev_set_speed(int l, int r);
 
 #endif
 

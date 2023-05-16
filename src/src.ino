@@ -5,17 +5,20 @@
 #define MOVE_IMPL
 #include "move.h"
 
+#define NET_IMPL
+#include "net.h"
+
 void setup() {
+	Serial.begin(115200);
 	pinMode(LED_BUILTIN, OUTPUT);
 
-	dev_init();
+	//dev_init();
+	net_init();
 }
 
 void loop() {
-	move_loop();
+	//move_loop();
+	net_loop();
 
-	digitalWrite(LED_BUILTIN, 1);
-	delay(1000);
-	digitalWrite(LED_BUILTIN, 0);
-	delay(1000);
+	delay(20);
 }
