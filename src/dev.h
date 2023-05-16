@@ -31,8 +31,8 @@ void dev_init() {
 }
 
 void dev_set_speed(int l, int r) {	// 0 - still; -255 - full speed back; 255 - full speed forward 
-	dev_servo_l.write(map(l, -255, 255, 0, 180));
-	dev_servo_r.write(map(r, -255, 255, 0, 180));
+	dev_servo_l.write(map(l, -300, 300, 0, 180));	// dirty speed hack
+	dev_servo_r.write(map(-r, -255, 255, 0, 180));
 }
 
 String dev_log() {
