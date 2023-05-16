@@ -7,8 +7,8 @@
 #define DEV_LINE_M 25
 #define DEV_LINE_R 26
 
-#define DEV_SERVO_L_PIN 12
-#define DEV_SERVO_R_PIN 13
+#define DEV_SERVO_L_PIN 13
+#define DEV_SERVO_R_PIN 5
 
 Servo dev_servo_l;
 Servo dev_servo_r;
@@ -26,12 +26,17 @@ void dev_init() {
 	pinMode(DEV_LINE_M, INPUT);
 	pinMode(DEV_LINE_R, INPUT);
 
+	ESP32PWM::allocateTimer(0);
+	ESP32PWM::allocateTimer(1);
+	ESP32PWM::allocateTimer(2);
+	ESP32PWM::allocateTimer(3);
+
 	dev_servo_l.attach(DEV_SERVO_L_PIN);
 	dev_servo_r.attach(DEV_SERVO_R_PIN);
 }
 
 void dev_set_speed(int l, int r) {	// 0 - still; -255 - full speed back; 255 - full speed forward 
-	dev_servo_l.write(map(l, -300, 300, 0, 180));	// dirty speed hack
+	dev_servo_l.write(map(l, -255, 255, 0, 180));	// dirty speed hack
 	dev_servo_r.write(map(-r, -255, 255, 0, 180));
 }
 

@@ -3,22 +3,8 @@
 
 #define MOVE_SQ_DIM 10
 
-int move_field_w = 10;
-int move_field_h = 10;
-
-int _move_x = 0;
-int _move_y = 0;
-int _move_dirx = 1;
-int _move_diry = 0;
-int _move_target_x = 0;
-int _move_target_y = 0;
-
-enum move_state {
-	MoveStateIdle,
-	MoveStateDrive
-};
-
-enum move_state _move_state = MoveStateIdle;
+bool *_move_path;
+bool *_move_path_end;
 
 void move_loop();
 String move_log();
@@ -27,95 +13,65 @@ String move_log();
 
 #ifdef MOVE_IMPL
 
-bool _move_last_scan[3] = {0};
-
 #include <string.h>
 
-bool _move_scan_cmp(bool scan[3], bool l, bool m, bool r) {
-	return scan[0] == l && scan[1] == m && scan[2] == r;
-}
-
-void _move_rotate(bool clockwise) {
-	const int l = clockwise ? 255 : -255;
-	const int r = clockwise ? -255 : 255;
-
-	while (digitalRead(DEV_LINE_M)) {
-		dev_set_speed(l, r);
-		delay(20);
-	}
-
-	while (!digitalRead(DEV_LINE_M)) {
-		dev_set_speed(l, r);
-		delay(20);
-	}
-
-	_move_dirx = (_move_dirx + clockwise ? 1 : -1) % 2;
-	_move_diry = (_move_diry + clockwise ? 1 : -1) % 2;
-}
-
-void _move_advance() {
-	++_move_x;
-	++_move_y;
-
-	if (_move_dirx && _move_x == _move_target_x) {
-		_move_rotate(_move_y < _move_target_y);
-	}
-
-	if (_move_diry && _move_y == _move_target_y) {
-		_move_rotate(_move_x < _move_target_x);
-	}
-}
-
 void move_loop() {
-	bool scan[3] = {
-		digitalRead(DEV_LINE_L),
-		digitalRead(DEV_LINE_M),
-		digitalRead(DEV_LINE_R)
-	};
+	const int l = digitalRead(DEV_LINE_L);
+	const int m = digitalRead(DEV_LINE_M);
+	const int r = digitalRead(DEV_LINE_R);
+	const int c = l + m + r;
 
-	switch (_move_state) {
-	case MoveStateIdle:
+	const int speed = 255;
+		/*if (l) dev_set_speed(60, 255);
+		else if (r) dev_set_speed(255, 60);*/
+		if (l) dev_set_speed(0, 0);
+		else if (r) dev_set_speed(0, 0);
+		else dev_set_speed(speed, speed);
+	/*switch (c) {
+	case 0:
+		dev_set_speed(255, -255);
 		break;
-	case MoveStateDrive:
-		if (scan[0] && !scan[2]) {
-			dev_set_speed(255, 200);
-		} else if (!scan[0] && scan[2]) {
-			dev_set_speed(200, 255);
-		} else {
+	case 1:
+		if (l) dev_set_speed(128, 255);
+		else if (r) dev_set_speed(255, 128);
+		else dev_set_speed(255, 255);
+		break;
+	case 2: { // this is hacky at best
+		if (_move_path == _move_path_end)
+			break;
+		const bool p = *_move_path;
+		++_move_path;
+		if (p) {
 			dev_set_speed(255, 255);
+			delay(50);
+			break;
 		}
 
-		if (_move_scan_cmp(scan, 1, 1, 1) &&
-			_move_scan_cmp(_move_last_scan, 0, 1, 0))
-				_move_advance();
+		if (l) {
+			dev_set_speed(0, 255);
+			delay(50);
+		} else if (r) {
+			dev_set_speed(255, 0);
+			delay(50);
+		}
+
+		dev_set_speed(255, 255);
+		delay(50);
 		break;
-	}
-
-	memcpy(_move_last_scan, scan, sizeof(scan));
-}
-
-void move_goto(int x, int y) {
-	_move_target_x = x;
-	_move_target_y = y;
-
-	int signofx = (_move_target_x - _move_x) < 0 ? -1 : 1;
-	int signofy = (_move_target_y - _move_y) < 0 ? -1 : 1;
-
-	if (_move_x != _move_target_x) {
-		while (_move_dirx != signofx)
-			_move_rotate(true);
-	} else if (_move_y != _move_target_y) {
-		while (_move_diry != signofy)
-			_move_rotate(true);
-	}
+	} case 3:
+		digitalWrite(LED_BUILTIN, 1);	
+		delay(200);
+		digitalWrite(LED_BUILTIN, 0);	
+		delay(200);
+		digitalWrite(LED_BUILTIN, 1);	
+		delay(200);
+		digitalWrite(LED_BUILTIN, 0);	
+		break;
+	}*/
 }
 
 String move_log() {
-	char buf[2048];
-	sprintf(buf, "x: %d, y: %d\ntgx: %d, tgy: %d\ndirx: %d, diry: %d\n",
-		_move_x, _move_y, _move_target_x, _move_target_y,
-		_move_dirx, _move_diry);
-	return buf;
+	return String("");
 }
 
 #undef MOVE_IMPL
