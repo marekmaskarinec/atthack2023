@@ -23,6 +23,7 @@ void move_set_path(char *s);
 
 #include <string.h>
 
+// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 void move_loop() {
 	if (!move_enabled) {
 		dev_set_speed(0, 0);
@@ -87,7 +88,7 @@ void move_loop() {
 			_move_swc = false;
 		}
 	} else {
-		if (_move_swc && micros() - _move_swc_start > 180000) {
+		if (_move_swc && micros() - _move_swc_start > 160000) {
 			move_enabled = false;
 			_move_swc = false;
 			return;

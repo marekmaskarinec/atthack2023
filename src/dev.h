@@ -10,8 +10,15 @@
 #define DEV_SERVO_L_PIN 13
 #define DEV_SERVO_R_PIN 5
 
+#define DEV_ARM_SERVO_A_PIN 27
+#define DEV_ARM_SERVO_B_PIN 14
+
+#define DEV_MAGNET_PIN 2
+
 Servo dev_servo_l;
 Servo dev_servo_r;
+Servo dev_arm_servo_a;
+Servo dev_arm_servo_b;
 
 void dev_init();
 void dev_set_speed(int l, int r);
@@ -25,6 +32,8 @@ void dev_init() {
 	pinMode(DEV_LINE_L, INPUT);
 	pinMode(DEV_LINE_M, INPUT);
 	pinMode(DEV_LINE_R, INPUT);
+
+	pinMode(DEV_MAGNET_PIN, OUTPUT);
 
 	ESP32PWM::allocateTimer(0);
 	ESP32PWM::allocateTimer(1);
