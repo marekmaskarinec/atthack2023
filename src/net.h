@@ -91,6 +91,26 @@ void net_init() {
 		_net_serv.send(200, "text/plain", "rotate: ok\n");
 	});
 
+	_net_serv.on("/api/armdown", []() {
+		arm_down();
+		_net_serv.send(200, "text/plain", "armdown: ok\n");
+	});
+
+	_net_serv.on("/api/armup", []() {
+		arm_up();
+		_net_serv.send(200, "text/plain", "armup: ok\n");
+	});
+
+	_net_serv.on("/api/magon", []() {
+		digitalWrite(DEV_MAGNET_PIN, 1);
+		_net_serv.send(200, "text/plain", "magon: ok\n");
+	});
+
+	_net_serv.on("/api/magoff", []() {
+		digitalWrite(DEV_MAGNET_PIN, 0);
+		_net_serv.send(200, "text/plain", "magoff: ok\n");
+	});
+
 	_net_serv.onNotFound(_net_handle_not_found);
 
 	_net_serv.begin();

@@ -2,6 +2,7 @@
 #define ARM_H
 
 void arm_up();
+void arm_down();
 
 #endif
 

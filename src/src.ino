@@ -5,11 +5,11 @@
 #define MOVE_IMPL
 #include "move.h"
 
-#define NET_IMPL
-#include "net.h"
-
 #define ARM_IMPL
 #include "arm.h"
+
+#define NET_IMPL
+#include "net.h"
 
 void setup() {
 	Serial.begin(115200);
@@ -17,13 +17,6 @@ void setup() {
 
 	dev_init();
 	net_init();
-
-	arm_up();
-	delay(2000);
-	arm_down();
-	digitalWrite(DEV_MAGNET_PIN, 1);
-	delay(500);
-	arm_up();
 }
 
 void loop() {
