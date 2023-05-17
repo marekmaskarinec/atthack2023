@@ -10,6 +10,8 @@ uint64_t _move_swc_start = 0;
 bool move_enabled = false;
 char _move_path[256] = {0};
 int _move_pathi = 0;
+bool _move_checked_for_path = false;
+int _move_lrdir = 1;
 
 void move_loop();
 String move_log();
@@ -33,9 +35,12 @@ void move_loop() {
 	const int c = l + m + r;
 
 	if (c == 0) {
-		dev_set_speed(0, 0);
-		return;
+		const int a = _move_lrdir < 0 ? -128 : 128;
+		while (!digitalRead(DEV_LINE_M))
+			dev_set_speed(a, -a);
 	}
+
+	_move_checked_for_path = true;
 
 	if (c == 3) {
 		const uint64_t mcs = micros();
@@ -44,7 +49,7 @@ void move_loop() {
 			_move_swc_start = mcs;
 		}
 
-		if (mcs - _move_swc_start > 120000) {
+		if (mcs - _move_swc_start > 240000) {
 			digitalWrite(LED_BUILTIN, 1);
 			dev_set_speed(0, 0);
 			delay(1000);
@@ -60,13 +65,13 @@ void move_loop() {
 				dev_set_speed(255, 255);
 				delay(400);
 				dev_set_speed(-255, 255);
-				delay(200);
-				while (!digitalRead(DEV_LINE_M))
-					dev_set_speed(-255, 255);
+				delay(600);
+				dev_set_speed(0, 0);
+				_move_lrdir = -1;
 				break;
 			case 'f':
 				dev_set_speed(255, 255);
-				delay(800);
+				delay(600);
 				break;
 			case 'r':
 				dev_set_speed(255, 255);
@@ -75,16 +80,31 @@ void move_loop() {
 				delay(400);
 				while (!digitalRead(DEV_LINE_M))
 					dev_set_speed(255, -255);
+				_move_lrdir = 1;
 				break;
 			}
+
+			_move_swc = false;
 		}
 	} else {
+		if (_move_swc && micros() - _move_swc_start > 180000) {
+			move_enabled = false;
+			_move_swc = false;
+			return;
+		}
+
 		_move_swc = false;
 	}
 
-	if (l && !r) dev_set_speed(0, 150);
-	else if (r && !l) dev_set_speed(150, 0);
-	else dev_set_speed(150, 150);
+	if (l && !r) {
+		dev_set_speed(0, 150);
+		_move_lrdir = -1;
+	} else if (r && !l) {
+		dev_set_speed(150, 0);
+		_move_lrdir = 1;
+	} else {
+		dev_set_speed(150, 150);
+	}
 }
 
 String move_log() {
