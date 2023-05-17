@@ -1,0 +1,13 @@
+#!/bin/sh
+
+./rot
+sleep 0.8
+./dis
+
+./armdown
+./magoff
+./armup
+
+./en
+sleep 0.8
+./dis

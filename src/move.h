@@ -36,8 +36,6 @@ void move_loop() {
 	const int c = l + m + r;
 
 	if (c == 0) {
-		Serial.println("c == 0");
-		Serial.println(_move_lrdir);
 		const int a = _move_lrdir < 0 ? 100 : -100;
 		while (!digitalRead(DEV_LINE_M) && !digitalRead(DEV_LINE_L) && !digitalRead(DEV_LINE_R))
 			dev_set_speed(a, -a);
@@ -53,10 +51,10 @@ void move_loop() {
 		}
 
 		if (mcs - _move_swc_start > 240000) {
-			digitalWrite(LED_BUILTIN, 1);
+			/*digitalWrite(LED_BUILTIN, 1);
 			dev_set_speed(0, 0);
 			delay(1000);
-			digitalWrite(LED_BUILTIN, 0);
+			digitalWrite(LED_BUILTIN, 0);*/
 			char c = _move_path[_move_pathi++];
 			if (c == NULL) {
 				_move_pathi = 0;
@@ -65,14 +63,12 @@ void move_loop() {
 
 			switch (c) {
 			case 'l':
-				Serial.println("l1");
 				dev_set_speed(255, 255);
 				delay(400);
 				dev_set_speed(-255, 255);
 				delay(400);
 				dev_set_speed(0, 0);
 				_move_lrdir = -1;
-				Serial.println("l2");
 				break;
 			case 'f':
 				dev_set_speed(255, 255);

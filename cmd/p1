@@ -1,0 +1,6 @@
+#!/bin/sh
+
+./armdown
+sleep 0.2
+./magon
+./armup

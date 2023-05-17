@@ -10,8 +10,8 @@
 
 WebServer _net_serv(80);
 
-#define SSID "hackathon"
-#define PWD "att4hack"
+#define SSID "aaaaaaaaa"
+#define PWD "uxju0016"
 
 void net_init();
 void net_loop();
