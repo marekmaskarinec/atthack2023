@@ -59,9 +59,8 @@ void move_loop() {
 			case 'l':
 				dev_set_speed(255, 255);
 				delay(400);
-				while (digitalRead(DEV_LINE_M))
-					dev_set_speed(-255, 255);
-				delay(50);
+				dev_set_speed(-255, 255);
+				delay(200);
 				while (!digitalRead(DEV_LINE_M))
 					dev_set_speed(-255, 255);
 				break;
@@ -72,9 +71,8 @@ void move_loop() {
 			case 'r':
 				dev_set_speed(255, 255);
 				delay(400);
-				while (digitalRead(DEV_LINE_M))
-					dev_set_speed(255, -255);
-				delay(50);
+				dev_set_speed(255, -255);
+				delay(400);
 				while (!digitalRead(DEV_LINE_M))
 					dev_set_speed(255, -255);
 				break;
@@ -90,7 +88,10 @@ void move_loop() {
 }
 
 String move_log() {
-	return String("");
+	char buf[2048];
+	sprintf(buf, "swc: %d\nen: %d\npath: %s\npathi: %s\n",
+		_move_swc, move_enabled, _move_path, _move_pathi);
+	return String(buf);
 }
 
 void move_set_path(const char *s) {

@@ -62,7 +62,7 @@ void net_init() {
 
 	_net_serv.on("/", []() {
 		String message = "Move:\n";
-		//message += move_log();
+		message += move_log();
 		message += "\n-----\n\nDev:\n";
 		message += dev_log();
 		_net_serv.send(200, "text/plain", message);
