@@ -13,7 +13,7 @@
 #define DEV_ARM_SERVO_A_PIN 27
 #define DEV_ARM_SERVO_B_PIN 14
 
-#define DEV_MAGNET_PIN 2
+#define DEV_MAGNET_PIN 4
 
 Servo dev_servo_l;
 Servo dev_servo_r;

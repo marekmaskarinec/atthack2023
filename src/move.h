@@ -36,8 +36,10 @@ void move_loop() {
 	const int c = l + m + r;
 
 	if (c == 0) {
-		const int a = _move_lrdir < 0 ? -128 : 128;
-		while (!digitalRead(DEV_LINE_M))
+		Serial.println("c == 0");
+		Serial.println(_move_lrdir);
+		const int a = _move_lrdir < 0 ? 100 : -100;
+		while (!digitalRead(DEV_LINE_M) && !digitalRead(DEV_LINE_L) && !digitalRead(DEV_LINE_R))
 			dev_set_speed(a, -a);
 	}
 
@@ -63,12 +65,14 @@ void move_loop() {
 
 			switch (c) {
 			case 'l':
+				Serial.println("l1");
 				dev_set_speed(255, 255);
 				delay(400);
 				dev_set_speed(-255, 255);
-				delay(600);
+				delay(400);
 				dev_set_speed(0, 0);
 				_move_lrdir = -1;
+				Serial.println("l2");
 				break;
 			case 'f':
 				dev_set_speed(255, 255);
@@ -86,12 +90,12 @@ void move_loop() {
 			}
 
 			_move_swc = false;
+			return;
 		}
 	} else {
-		if (_move_swc && micros() - _move_swc_start > 160000) {
+		if (_move_swc && micros() - _move_swc_start > 120000) {
 			move_enabled = false;
 			_move_swc = false;
-			return;
 		}
 
 		_move_swc = false;
@@ -99,10 +103,10 @@ void move_loop() {
 
 	if (l && !r) {
 		dev_set_speed(0, 150);
-		_move_lrdir = -1;
+		_move_lrdir = 1;
 	} else if (r && !l) {
 		dev_set_speed(150, 0);
-		_move_lrdir = 1;
+		_move_lrdir = -1;
 	} else {
 		dev_set_speed(150, 150);
 	}

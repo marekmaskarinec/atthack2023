@@ -86,7 +86,7 @@ void net_init() {
 	_net_serv.on("/api/rotate", []() {
 		dev_set_speed(255, -255);
 		delay(800);
-		_move_lrdir = 1;
+		_move_lrdir = -1;
 		move_enabled = true;
 		_net_serv.send(200, "text/plain", "rotate: ok\n");
 	});
